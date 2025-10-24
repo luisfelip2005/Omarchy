@@ -19,6 +19,5 @@ else
     hyprctl keyword decoration:rounding 8
     hyprctl keyword general:border_size 2
 
-
     notify-send "Hyprland" "Gaps enabled"
 fi
