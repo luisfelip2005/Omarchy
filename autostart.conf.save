@@ -1,6 +1,0 @@
-# Extra autostart processes
-# exec-once = uwsm app -- my-service
-
-# starts the hyprsunset
-exec-once = ~/.config/hypr/hyprsunset
-
