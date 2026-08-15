@@ -3,6 +3,27 @@
 
 -- Keyboard layout and options.
 -- See https://wiki.hypr.land/Configuring/Basics/Variables/#input
+-- Override Omarchy default that maps CapsLock to Compose (compose:caps),
+-- restoring Caps Lock as a working caps-lock toggle.
+hl.config({
+  input = {
+    kb_layout = "br",
+    kb_options = "",
+
+    -- Change speed of keyboard repeat.
+    repeat_rate = 40,
+    repeat_delay = 250,
+
+    -- Start with numlock on by default.
+    numlock_by_default = true,
+
+    touchpad = {
+      -- Control the speed of your scrolling.
+      scroll_factor = 0.4,
+    },
+  },
+})
+
 -- hl.config({
 --   input = {
 --     -- Use multiple keyboard layouts and switch between them with Left Alt + Right Alt.
