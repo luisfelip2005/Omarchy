@@ -4,8 +4,8 @@
 hl.config({
   general = {
     -- No gaps between windows or borders.
-    gaps_in = 0,
-    gaps_out = 5,
+    gaps_in = 3,
+    gaps_out = 4,
     border_size = 2,
 
     -- Change to niri-like side-scrolling layout.
