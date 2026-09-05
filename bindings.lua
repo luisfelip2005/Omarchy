@@ -41,8 +41,8 @@ hl.unbind("SUPER + W")
 o.bind("SUPER + Q", "Close window", hl.dsp.window.close())
 
 -- Previous/next workspace: navigates ALL workspaces, including empty ones.
-o.bind("SUPER + SHIFT + CTRL + LEFT", "Previous workspace", hl.dsp.focus({ workspace = "-1" }))
-o.bind("SUPER + SHIFT + CTRL + RIGHT", "Next workspace", hl.dsp.focus({ workspace = "+1" }))
+o.bind("SUPER + CTRL + LEFT", "Previous workspace", hl.dsp.focus({ workspace = "-1" }))
+o.bind("SUPER + CTRL + RIGHT", "Next workspace", hl.dsp.focus({ workspace = "+1" }))
 
 -- Move active window to previous/next workspace.
 o.bind("SUPER + CTRL + ALT + LEFT", "Move window to previous workspace", hl.dsp.window.move({ workspace = "-1" }))
