@@ -44,6 +44,10 @@ o.bind("SUPER + CTRL + ALT + N", "Increase temperature", os.getenv("HOME") .. "/
 hl.unbind("SUPER + W")
 o.bind("SUPER + Q", "Close window", hl.dsp.window.close())
 
+-- Close all windows with confirmation pop-up (replace default CTRL + ALT + DELETE)
+hl.unbind("CTRL + ALT + DELETE")
+o.bind("CTRL + ALT + DELETE", "Close all windows (confirm)", os.getenv("HOME") .. "/.config/hypr/controllers/confirm_close_all.sh")
+
 -- Switch to previous/next workspace (navigates all workspaces, including empty)
 o.bind("SUPER + CTRL + LEFT", "Previous workspace", hl.dsp.focus({ workspace = "-1" }))
 o.bind("SUPER + CTRL + RIGHT", "Next workspace", hl.dsp.focus({ workspace = "+1" }))
