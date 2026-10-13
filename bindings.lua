@@ -55,3 +55,15 @@ o.bind("SUPER + CTRL + RIGHT", "Next workspace", hl.dsp.focus({ workspace = "+1"
 -- Move active window to previous/next workspace
 o.bind("SUPER + CTRL + ALT + LEFT", "Move window to previous workspace", hl.dsp.window.move({ workspace = "-1" }))
 o.bind("SUPER + CTRL + ALT + RIGHT", "Move window to next workspace", hl.dsp.window.move({ workspace = "+1" }))
+
+-- Steam
+o.bind("SUPER + SHIFT + T", "Steam", { launch = "steam" })
+
+-- VSCode
+o.bind("SUPER + SHIFT + V", "VSCode", { launch = "code" })
+
+-- Mission Center
+o.bind("SUPER + SHIFT + R", "Mission Center", { launch = "flatpak run io.missioncenter.MissionCenter" })
+
+-- Stremio
+o.bind("SUPER + SHIFT + U", "Stremio", { launch = "stremio" })
