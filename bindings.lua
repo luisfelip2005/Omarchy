@@ -67,3 +67,6 @@ o.bind("SUPER + SHIFT + R", "Mission Center", { launch = "flatpak run io.mission
 
 -- Stremio
 o.bind("SUPER + SHIFT + U", "Stremio", { launch = "stremio" })
+
+-- Winboat
+o.bind("SUPER + SHIFT + K", "Winboat", { launch = "/opt/winboat/winboat" })
