@@ -36,9 +36,9 @@
 o.bind("SUPER + SHIFT + CTRL + F5", "Decrease brightness", os.getenv("HOME") .. "/.config/hypr/controllers/decrease_brightness.sh")
 o.bind("SUPER + SHIFT + CTRL + F6", "Increase brightness", os.getenv("HOME") .. "/.config/hypr/controllers/increase_brightness.sh")
 
--- Temperature (decrease / increase) — hyprsunset
-o.bind("SUPER + CTRL + SHIFT + N", "Decrease temperature", os.getenv("HOME") .. "/.config/hypr/controllers/decrease_temperature.sh")
-o.bind("SUPER + CTRL + ALT + N", "Increase temperature", os.getenv("HOME") .. "/.config/hypr/controllers/increase_temperature.sh")
+-- Night light (hyprsunset): more orange = lower temperature
+o.bind("SUPER + CTRL + SHIFT + N", "Night light: more orange (decrease temperature)", os.getenv("HOME") .. "/.config/hypr/controllers/decrease_temperature.sh")
+o.bind("SUPER + CTRL + ALT + N", "Night light: less orange (increase temperature)", os.getenv("HOME") .. "/.config/hypr/controllers/increase_temperature.sh")
 
 -- Close windows (replace default SUPER + W)
 hl.unbind("SUPER + W")
