@@ -57,7 +57,8 @@
 -- overrides that default.
 hl.config({
   input = {
-    kb_layout = "br",
+    kb_layout = "br,us",
+    kb_variant = "abnt2,",
     kb_options = "",
     repeat_rate = 40,
     repeat_delay = 250,

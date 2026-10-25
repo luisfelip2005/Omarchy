@@ -73,3 +73,6 @@ o.bind("SUPER + SHIFT + U", "Stremio", { launch = "stremio" })
 
 -- Winboat
 o.bind("SUPER + SHIFT + K", "Winboat", { launch = "/opt/winboat/winboat" })
+
+-- Toggle keyboard layout (br,us)
+o.bind("SUPER + SHIFT + L", "Toggle keyboard layout", os.getenv("HOME") .. "/.config/hypr/controllers/toggle_keyboard.sh")
