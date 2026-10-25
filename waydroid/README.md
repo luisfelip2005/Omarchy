@@ -66,6 +66,7 @@ No fim, o usuário deve conseguir abrir a Play Store, fazer login e instalar um 
 | `setup_waydroid.sh` | Setup completo: dependências, binderfs, imagens GAPPS, rede, serviço de sessão, verificação e certificação. |
 | `cleanup_waydroid.sh` | Remove uma instalação existente (imagens, dados, unidades, regras de rede) para começar do zero. |
 | `waydroid-net-debug.sh` | Diagnóstico de rede: regras do host, rotas internas do Android e testes de ping/DNS. |
+| `PROMPT-APPS.md` | Prompt de implementação dos apps Android (Nio Player e STV): tradução ARM, ADB sem root, instalação, correção de áudio, manual de uso do STV e diagnóstico do Nio. |
 | `README.md` | Este prompt/guia. |
 
 Todos os scripts usam `set -Eeuo pipefail` e podem ser chamados de qualquer
