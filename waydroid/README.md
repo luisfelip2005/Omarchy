@@ -66,6 +66,8 @@ No fim, o usuário deve conseguir abrir a Play Store, fazer login e instalar um 
 | `setup_waydroid.sh` | Setup completo: dependências, binderfs, imagens GAPPS, rede, serviço de sessão, verificação e certificação. |
 | `cleanup_waydroid.sh` | Remove uma instalação existente (imagens, dados, unidades, regras de rede) para começar do zero. |
 | `waydroid-net-debug.sh` | Diagnóstico de rede: regras do host, rotas internas do Android e testes de ping/DNS. |
+| `fix_waydroid_audio.sh` | Corrige o áudio mudo do Waydroid reiniciando só a HAL de áudio do Android (`--status` para diagnosticar). |
+| `AUDIO-SEM-SOM.md` | Contexto do bug "Waydroid sem som": diagnóstico pelo PipeWire, causa, correção e validação. |
 | `PROMPT-APPS.md` | Prompt de implementação dos apps Android (Nio Player e STV): tradução ARM, ADB sem root, instalação, correção de áudio, manual de uso do STV e diagnóstico do Nio. |
 | `SOLUCAO-NIO.md` | Solução do Nio Player na máquina A: sintoma, diagnóstico comparativo com a máquina B, causa raiz (auto-login × login manual), correção aplicada, validação e backup recomendado. |
 | `README.md` | Este prompt/guia. |
@@ -548,6 +550,7 @@ funcionar, o problema não é NAT/WAN.
 | Waydroid usa `iptables-legacy` e UFW usa nft | scripts do Waydroid preferem `iptables-legacy` | o `net-fix` replica as regras no backend nft; as regras legacy não são suficientes |
 | App ARM não instala | imagem x86_64 sem tradução ARM | opcional: instalar `libndk`/`libhoudini`; `lzip` pode ser necessário |
 | Download da imagem falha | rede/OTA instável | rodar de novo (cache) ou `--force-images`; conferir `ota.waydro.id` |
+| App toca vídeo mas nenhum app Android tem som | HAL de áudio do Android acumula conexões no PipeWire e trava (bug do Waydroid) | `./fix_waydroid_audio.sh`, depois pause/play no app; detalhes em `AUDIO-SEM-SOM.md` |
 
 ---
 
