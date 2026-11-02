@@ -647,6 +647,7 @@ adb logcat -d | grep -iE 'pcm_out|SDL_Android_AudioTrack|FFP_MSG_AUDIO'
 | “STV isn't responding” | app ARM traduzido + muitas teclas seguidas | escolher **Wait**, ir devagar (1–3 s entre teclas) |
 | “CANAL COM FALHA NA ORIGEM” | fonte do canal caiu | trocar de canal; não é o Waydroid |
 | Nio parado na splash | suspeita de root/emulador ou API | seção 9 (diagnóstico e alternativas) |
+| **Nio E STV presos na splash/logo** | **UFW `FORWARD=DROP` com regras apontando para WAN antiga; TCP de saída bloqueado (ping/DNS funcionam)** | **`sudo ./fix_waydroid_apps.sh` — ver `SOLUCAO-APPS-NAO-ABREM.md`** |
 | `screencap` gera arquivo inválido | aviso do driver AMD antes do PNG | cortar até o magic `\x89PNG` (seção 5.3) |
 
 ---

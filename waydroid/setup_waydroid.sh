@@ -640,11 +640,12 @@ if command -v ufw >/dev/null; then
     ufw_status="$(ufw status 2>/dev/null || true)"
     if [[ "$ufw_status" == *"Status: active"* ]]; then
         ufw allow in on waydroid0 comment 'Waydroid DHCP/DNS' >/dev/null 2>&1 || true
+        # Regras genéricas: não dependem do nome da WAN (Ethernet/Wi-Fi/USB/VPN).
+        ufw route allow in on waydroid0 comment 'Waydroid outbound' >/dev/null 2>&1 || true
+        ufw route allow out on waydroid0 comment 'Waydroid return' >/dev/null 2>&1 || true
         if [[ -n "$WAN_IF" ]]; then
             ufw route allow in on waydroid0 out on "$WAN_IF" comment 'Waydroid outbound' >/dev/null 2>&1 || true
             ufw route allow in on "$WAN_IF" out on waydroid0 comment 'Waydroid return' >/dev/null 2>&1 || true
-        else
-            ufw route allow in on waydroid0 comment 'Waydroid outbound' >/dev/null 2>&1 || true
         fi
     fi
 fi
@@ -656,27 +657,49 @@ EOS
     cat > /etc/systemd/system/waydroid-net-fix.service <<'EOS'
 [Unit]
 Description=Correções de rede/firewall do Waydroid
-After=waydroid-container.service
+After=network-online.target NetworkManager.service ufw.service waydroid-container.service
+Wants=network-online.target
+StartLimitIntervalSec=0
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/lib/waydroid/net-fix
+ExecStart=/usr/bin/flock -w 10 /run/waydroid-net-fix.lock /usr/local/lib/waydroid/net-fix
 EOS
 
-    cat > /etc/systemd/system/waydroid-net-fix.path <<'EOS'
+    cat > /etc/systemd/system/waydroid-net-fix.timer <<'EOS'
 [Unit]
-Description=Observa waydroid0 para aplicar correções de rede
+Description=Reaplica periodicamente as regras de rede do Waydroid
 
-[Path]
-PathExists=/sys/class/net/waydroid0
+[Timer]
+OnBootSec=45s
+OnUnitActiveSec=3min
+AccuracySec=30s
 Unit=waydroid-net-fix.service
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=timers.target
 EOS
 
+    # O path unit antigo (PathExists=/sys/class/net/waydroid0) re-dispara o
+    # serviço em loop enquanto waydroid0 existe. O timer + dispatcher bastam.
+    systemctl disable --now waydroid-net-fix.path >/dev/null 2>&1 || true
+    rm -f /etc/systemd/system/waydroid-net-fix.path
+
+    # NetworkManager: reaplica quando a WAN/VPN muda.
+    install -d -m 0755 /etc/NetworkManager/dispatcher.d
+    cat > /etc/NetworkManager/dispatcher.d/90-waydroid-net-fix <<'EOS'
+#!/bin/sh
+[ -x /usr/local/lib/waydroid/net-fix ] || exit 0
+case "$2" in
+    up|down|connectivity-change|vpn-up|vpn-down|dhcp4-change|dhcp6-change) ;;
+    *) exit 0 ;;
+esac
+exec /usr/bin/flock -n /run/waydroid-net-fix.lock /usr/local/lib/waydroid/net-fix >/dev/null 2>&1
+EOS
+    chmod 0755 /etc/NetworkManager/dispatcher.d/90-waydroid-net-fix
+
     systemctl daemon-reload
-    systemctl enable --now waydroid-net-fix.path
+    systemctl enable --now waydroid-net-fix.timer
 
     if [[ -e /sys/class/net/waydroid0 ]]; then
         /usr/local/lib/waydroid/net-fix || true

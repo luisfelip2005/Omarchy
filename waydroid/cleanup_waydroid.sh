@@ -145,6 +145,7 @@ check_mode() {
     state waydroid-container.service
     state waydroid-binderfs.service
     state dev-binderfs.mount
+    state waydroid-net-fix.timer
     state waydroid-net-fix.path
     state waydroid-net-fix.service
     printf '  waydroid-session.service (user): ativo: %s, enabled: %s\n' \
@@ -188,7 +189,9 @@ check_mode() {
         /etc/systemd/system/waydroid-binderfs.service \
         /etc/systemd/system/dev-binderfs.mount \
         /etc/systemd/system/waydroid-net-fix.service \
+        /etc/systemd/system/waydroid-net-fix.timer \
         /etc/systemd/system/waydroid-net-fix.path \
+        /etc/NetworkManager/dispatcher.d/90-waydroid-net-fix \
         /etc/systemd/system/waydroid-container.service.d/10-binderfs.conf \
         /etc/sysctl.d/99-waydroid.conf; do
         [[ -e "$p" ]] && printf '  %s\n' "$p"
@@ -219,8 +222,8 @@ cleanup_mode() {
     ok "Sessão parada."
 
     step "Parando serviços do sistema"
-    systemctl stop waydroid-net-fix.path waydroid-net-fix.service 2>/dev/null || true
-    systemctl disable waydroid-net-fix.path 2>/dev/null || true
+    systemctl stop waydroid-net-fix.timer waydroid-net-fix.path waydroid-net-fix.service 2>/dev/null || true
+    systemctl disable waydroid-net-fix.timer waydroid-net-fix.path 2>/dev/null || true
     systemctl stop waydroid-container 2>/dev/null || true
     systemctl disable waydroid-container 2>/dev/null || true
     systemctl stop waydroid-binderfs.service 2>/dev/null || true
@@ -232,7 +235,10 @@ cleanup_mode() {
     rm -f /etc/systemd/system/waydroid-binderfs.service
     rm -f /etc/systemd/system/dev-binderfs.mount
     rm -f /etc/systemd/system/waydroid-net-fix.service
+    rm -f /etc/systemd/system/waydroid-net-fix.timer
     rm -f /etc/systemd/system/waydroid-net-fix.path
+    rm -f /etc/NetworkManager/dispatcher.d/90-waydroid-net-fix
+    rm -f /run/waydroid-net-fix.lock
     rm -f /etc/systemd/system/waydroid-container.service.d/10-binderfs.conf
     rmdir /etc/systemd/system/waydroid-container.service.d 2>/dev/null || true
     rm -rf /usr/local/lib/waydroid
