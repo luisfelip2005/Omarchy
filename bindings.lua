@@ -70,3 +70,7 @@ o.bind("SUPER + SHIFT + U", "Stremio", { launch = "stremio" })
 
 -- Winboat
 o.bind("SUPER + SHIFT + K", "Winboat", { launch = "/opt/winboat/winboat" })
+
+-- Changing the app menu
+hl.unbind("SUPER + ALT + SPACE")
+o.bind("SUPER + ALT + SPACE", "Apps", "omarchy-menu toggle apps")
