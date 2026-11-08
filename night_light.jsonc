@@ -1,0 +1,60 @@
+// Dynamic night light — configuration file.
+//
+// The daemon (controllers/night_light_dynamic.py) re-reads this file on every
+// update, so saving applies the changes immediately (no restart needed).
+// Comments with // and /* ... */ are supported, like in this file.
+
+{
+  // ---------------------------------------------------------------------
+  // Location (used to calculate sunrise and sunset)
+  // ---------------------------------------------------------------------
+  "latitude": -23.55,
+  "longitude": -46.63,
+
+  // ---------------------------------------------------------------------
+  // Temperatures
+  // ---------------------------------------------------------------------
+
+  // Fixed preset applied by SUPER + ALT + N (press it again to go back to the
+  // automatic curve).
+  "preset_temperature": 2500,
+
+  // Temperature at the deepest point of the automatic curve (the lower, the
+  // warmer). The curve goes from max_temperature down to this value.
+  "night_temperature": 2200,
+
+  // Neutral daytime temperature and MAXIMUM temperature limit. Nothing goes
+  // above it.
+  "max_temperature": 6500,
+
+  // MINIMUM temperature limit (warmest). Nothing goes below it.
+  "min_temperature": 1200,
+
+  // ---------------------------------------------------------------------
+  // Manual adjustments (SUPER + SHIFT + CTRL + N / SUPER + CTRL + ALT + N)
+  // ---------------------------------------------------------------------
+
+  // How much each keypress adds or subtracts.
+  "offset_step": 500,
+
+  // Maximum amount that can be ADDED ("less orange" shortcut).
+  "max_offset_up": 2000,
+
+  // Maximum amount that can be SUBTRACTED ("more orange" shortcut).
+  "max_offset_down": 2000,
+
+  // ---------------------------------------------------------------------
+  // Solar curve
+  // ---------------------------------------------------------------------
+
+  // Sun elevation (in degrees) at which the screen starts warming up.
+  // Higher = starts earlier (3.0 ≈ 15 min before sunset).
+  "start_elevation": 3.0,
+
+  // Elevation at which the orange reaches its maximum.
+  // Lower = takes longer to get dark (-8.0 ≈ 45 min after sunset).
+  "full_elevation": -8.0,
+
+  // Update interval, in seconds.
+  "update_seconds": 20
+}
