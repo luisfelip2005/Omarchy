@@ -1,161 +1,161 @@
-# Mapeamento das Configurações do Hyprland — `.conf` vs `.lua`
+# Hyprland Configuration Mapping — `.conf` vs `.lua`
 
-Este documento mapeia com precisão as diferenças e semelhanças entre os dois
-formatos de configuração que coexistem em `~/.config/hypr/`.
+This document precisely maps the differences and similarities between the two
+configuration formats that coexist in `~/.config/hypr/`.
 
-- **`.conf`** — formato nativo original do Hyprland. Nesta máquina foram
-  **movidos para `backup_conf/`** (backup; já não são carregados).
-- **`.lua`** — novo formato do Omarchy, carregado ativamente. Usa helpers
+- **`.conf`** — Hyprland's original native format. On this machine they were
+  **moved to `backup_conf/`** (backup; no longer loaded).
+- **`.lua`** — Omarchy's new format, actively loaded. Uses helpers
   (`hl.config`, `hl.bind`, `o.bind`, `hl.dsp`, `hl.monitor`, `hl.env`,
-  `hl.gesture`) e `require("hypr.<nome>")`.
+  `hl.gesture`) and `require("hypr.<name>")`.
 
 ---
 
-## 1. Inventário de arquivos
+## 1. File inventory
 
 | Base | `.conf` | `.lua` | Status |
 |------|---------|--------|--------|
-| `hyprland` | sim | sim | ✅ par |
-| `autostart` | sim | sim | ✅ par |
-| `bindings` | sim | sim | ✅ par |
-| `input` | sim | sim | ✅ par |
-| `looknfeel` | sim | sim | ✅ par |
-| `monitors` | sim | sim | ✅ par |
-| `envs` | sim | **não** | ⚠️ só `.conf` |
-| `hypridle` | sim | **não** | ⚠️ só `.conf` |
-| `hyprlock` | sim | **não** | ⚠️ só `.conf` |
-| `hyprsunset` | sim | **não** | ⚠️ só `.conf` |
-| `xdph` | sim | **não** | ⚠️ só `.conf` |
+| `hyprland` | yes | yes | ✅ paired |
+| `autostart` | yes | yes | ✅ paired |
+| `bindings` | yes | yes | ✅ paired |
+| `input` | yes | yes | ✅ paired |
+| `looknfeel` | yes | yes | ✅ paired |
+| `monitors` | yes | yes | ✅ paired |
+| `envs` | yes | **no** | ⚠️ `.conf` only |
+| `hypridle` | yes | **no** | ⚠️ `.conf` only |
+| `hyprlock` | yes | **no** | ⚠️ `.conf` only |
+| `hyprsunset` | yes | **no** | ⚠️ `.conf` only |
+| `xdph` | yes | **no** | ⚠️ `.conf` only |
 
-> Todos os `.conf` estão em `backup_conf/`. Os arquivos `.conf.bak`
-> (`hypridle.conf.bak.*`, `hyprlock.conf.bak.*`) são backups antigos e
-> permanecem na raiz.
+> All `.conf` files are in `backup_conf/`. The `.conf.bak` files
+> (`hypridle.conf.bak.*`, `hyprlock.conf.bak.*`) are old backups and remain
+> in the root directory.
 
 ---
 
-## 2. Diferenças estruturais (geral)
+## 2. Structural differences (general)
 
-| Aspecto | `.conf` | `.lua` |
-|---------|---------|--------|
-| Sintaxe | `chave = valor`, blocos `{ }` | Lua: tabelas + helpers |
-| Seções | `general { }`, `decoration { }`, `input { }` | chamadas `hl.config({ ... })` |
-| Comentários | `#` | `--` |
-| Carregamento | `source = <caminho>` no `hyprland.conf` | `require("hypr.<nome>")` no `hyprland.lua` |
-| Helpers | nenhum | `hl.*`, `o.*` |
+| Aspect | `.conf` | `.lua` |
+|--------|---------|--------|
+| Syntax | `key = value`, `{ }` blocks | Lua: tables + helpers |
+| Sections | `general { }`, `decoration { }`, `input { }` | `hl.config({ ... })` calls |
+| Comments | `#` | `--` |
+| Loading | `source = <path>` in `hyprland.conf` | `require("hypr.<name>")` in `hyprland.lua` |
+| Helpers | none | `hl.*`, `o.*` |
 | Bindings | `bind` / `bindd` / `unbind` | `o.bind(...)`, `hl.unbind(...)` |
-| Estado padrão | valores ativos | muitos valores **comentados** (template) |
+| Default state | active values | many values **commented out** (template) |
 
 ---
 
-## 3. Comparação par a par
+## 3. Side-by-side comparison
 
-### 3.1 `hyprland` (arquivo principal)
-**Semelhanças:** ambos são o bootstrap que carrega os módulos na mesma ordem
-(defaults Omarchy → monitors → input → bindings → looknfeel → autostart →
-toggles) e ambos suportam desabilitar bindings padrão via
+### 3.1 `hyprland` (main file)
+**Similarities:** both are the bootstrap that loads modules in the same order
+(Omarchy defaults → monitors → input → bindings → looknfeel → autostart →
+toggles) and both support disabling default bindings through
 `omarchy_default_bindings` / `omarchy_preinstalled_bindings`.
 
-**Diferenças:**
+**Differences:**
 | `.conf` | `.lua` |
 |---------|--------|
-| `source = ~/.local/share/omarchy/default/hypr/...` para defaults | `dofile((os.getenv("OMARCHY_PATH") or "/usr/share/omarchy") .. "/default/hypr/bootstrap.lua")` + `require("default.hypr.omarchy")` |
-| `source = ~/.config/hypr/*.conf` para arquivos do usuário | `require("hypr.monitors")`, `require("hypr.input")`, etc. |
-| toggles por `source = ~/.local/state/omarchy/toggles/hypr/*.conf` | toggles por `require("default.hypr.toggles")` |
-| carrega tema via `~/.local/state/omarchy/current/theme/hyprland.conf` | bootstrap resolve caminhos via `OMARCHY_PATH` |
+| `source = ~/.local/share/omarchy/default/hypr/...` for defaults | `dofile((os.getenv("OMARCHY_PATH") or "/usr/share/omarchy") .. "/default/hypr/bootstrap.lua")` + `require("default.hypr.omarchy")` |
+| `source = ~/.config/hypr/*.conf` for user files | `require("hypr.monitors")`, `require("hypr.input")`, etc. |
+| toggles via `source = ~/.local/state/omarchy/toggles/hypr/*.conf` | toggles via `require("default.hypr.toggles")` |
+| loads theme via `~/.local/state/omarchy/current/theme/hyprland.conf` | bootstrap resolves paths via `OMARCHY_PATH` |
 
 ### 3.2 `autostart`
-| `.conf` (ativo) | `.lua` (vazio) |
+| `.conf` (active) | `.lua` (empty) |
 |------------------|-----------------|
-| `exec-once = hyprsunset` | só comentário `o.launch_on_start("my-service")` |
-| `exec-once = hyprctl keyword input:kb_layout br && hyprctl keyword input:kb_model abnt2 && ...` | nada ativo |
-| **conteúdo efetivo:** sim | **conteúdo efetivo:** não |
+| `exec-once = hyprsunset` | only a comment `o.launch_on_start("my-service")` |
+| `exec-once = hyprctl keyword input:kb_layout br && hyprctl keyword input:kb_model abnt2 && ...` | nothing active |
+| **effective content:** yes | **effective content:** no |
 
 ### 3.3 `bindings`
-| `.conf` (ativo) | `.lua` |
+| `.conf` (active) | `.lua` |
 |------------------|--------|
-| ~30 binds ativos (apps, webapps, workspaces, brightness, gaps, night light, scratchpad) | template vazio + bloco "Adapted from bindings.conf" adicionado nesta sessão |
-| usa `$terminal` / `$browser` como variáveis | não usa variáveis |
-| usa `unbind` para substituir defaults | usa `hl.unbind` |
-| chama `~/.config/hypr/controllers/*.sh` | os mesmos scripts (via `os.getenv("HOME")`) |
+| ~30 active binds (apps, webapps, workspaces, brightness, gaps, night light, scratchpad) | empty template + "Adapted from bindings.conf" block added in this session |
+| uses `$terminal` / `$browser` as variables | does not use variables |
+| uses `unbind` to replace defaults | uses `hl.unbind` |
+| calls `~/.config/hypr/controllers/*.sh` | the same scripts (via `os.getenv("HOME")`) |
 
 ### 3.4 `input`
-| `.conf` (ativo) | `.lua` |
+| `.conf` (active) | `.lua` |
 |------------------|--------|
-| `kb_layout = br`, `kb_options = grp:alts_toggle` | bloco `hl.config({...})` ATIVO (adicionado nesta sessão) com `kb_layout="br"`, `kb_options=""` |
+| `kb_layout = br`, `kb_options = grp:alts_toggle` | ACTIVE `hl.config({...})` block (added in this session) with `kb_layout="br"`, `kb_options=""` |
 | `repeat_delay = 600` | `repeat_delay = 250` |
-| `windowrule = match:class (Alacritty|kitty|foot), scroll_touchpad 1.5` | `o.window("(Alacritty|kitty|foot)", { scroll_touchpad = 1.5 })` (comentado) |
+| `windowrule = match:class (Alacritty|kitty|foot), scroll_touchpad 1.5` | `o.window("(Alacritty|kitty|foot)", { scroll_touchpad = 1.5 })` (commented) |
 
-**Nota:** o `.lua` foi editado para **restaurar o Caps Lock** — o default do
-Omarchy mapeia Caps Lock como tecla Compose (`compose:caps`), então
-`kb_options = ""` foi definido para desativar isso.
+**Note:** the `.lua` file was edited to **restore Caps Lock** — Omarchy's default
+maps Caps Lock to the Compose key (`compose:caps`), so
+`kb_options = ""` was set to disable it.
 
 ### 3.5 `looknfeel`
 | `.conf` | `.lua` |
 |---------|--------|
-| `general` gaps comentados; só `rounding = 8` ativo | `gaps_in=0`, `gaps_out=5`, `border_size=2`, `rounding=8`, `dim_inactive=true`, `dim_strength=0.15` — todos ativos |
-| sem `animations` / `scrolling` | blocos `animations` e `scrolling` comentados |
+| `general` gaps commented out; only `rounding = 8` active | `gaps_in=0`, `gaps_out=5`, `border_size=2`, `rounding=8`, `dim_inactive=true`, `dim_strength=0.15` — all active |
+| no `animations` / `scrolling` | `animations` and `scrolling` blocks commented out |
 
-**Conclusão:** o `.lua` é mais rico e ativo que o `.conf`.
+**Conclusion:** the `.lua` file is richer and more active than the `.conf` one.
 
 ### 3.6 `monitors`
-| `.conf` (ativo) | `.lua` (ativo) |
+| `.conf` (active) | `.lua` (active) |
 |------------------|-----------------|
 | `monitor=HDMI-A-1,1360x768@60,auto,auto` + `env = GDK_SCALE,1` | `hl.monitor({ output="", mode="preferred", position="auto", scale=1.03 })` + `hl.env("GDK_SCALE","1")` |
-| usa `auto` na escala | escala fixa `1.03` |
-| variáveis inexistentes | variáveis `omarchy_gdk_scale`, `omarchy_monitor_scale` |
+| uses `auto` for scale | fixed scale `1.03` |
+| nonexistent variables | `omarchy_gdk_scale`, `omarchy_monitor_scale` variables |
 
-**Divergência:** os dois apontam monitores diferentes ativos.
+**Divergence:** the two point to different active monitors.
 
 ---
 
-## 4. Arquivos somente `.conf` (sem par Lua)
+## 4. `.conf`-only files (no Lua counterpart)
 
-| Arquivo | Função |
+| File | Purpose |
 |---------|--------|
-| `envs.conf` | variáveis de ambiente (`GDK_SCALE`, `GDK_DPI_SCALE`, `QT_SCALE_FACTOR`, `QT_AUTO_SCREEN_SCALE_FACTOR`, `XCURSOR_SIZE`) |
-| `hypridle.conf` | daemon idle (lock/suspensão/screensaver) |
-| `hyprlock.conf` | tela de bloqueio (faz `source` do tema em `~/.config/omarchy/current/theme/hyprlock.conf`) |
-| `hyprsunset.conf` | night light (perfis 07:00 identity / 18:00 2000K) |
-| `xdph.conf` | portal de compartilhamento de tela (`hyprland-preview-share-picker`) |
+| `envs.conf` | environment variables (`GDK_SCALE`, `GDK_DPI_SCALE`, `QT_SCALE_FACTOR`, `QT_AUTO_SCREEN_SCALE_FACTOR`, `XCURSOR_SIZE`) |
+| `hypridle.conf` | idle daemon (lock/suspend/screensaver) |
+| `hyprlock.conf` | lock screen (`source`s the theme in `~/.config/omarchy/current/theme/hyprlock.conf`) |
+| `hyprsunset.conf` | night light (07:00 identity / 18:00 2000K profiles) |
+| `xdph.conf` | screen sharing portal (`hyprland-preview-share-picker`) |
 
-> Estes continuam sem contraparte Lua no modelo Omarchy atual.
+> These still have no Lua counterpart in the current Omarchy model.
 
 ---
 
-## 5. Mudanças realizadas nesta sessão (estado pós-migração)
+## 5. Changes made in this session (post-migration state)
 
-1. **`.conf` movidos para `backup_conf/`** (Tarefa 2).
-2. **`input.lua`**: adicionado bloco `hl.config` ativo para restaurar Caps Lock
+1. **`.conf` files moved to `backup_conf/`** (Task 2).
+2. **`input.lua`**: added an active `hl.config` block to restore Caps Lock
    (`kb_layout="br"`, `kb_options=""`).
-3. **`bindings.lua`**: adicionado bloco "Adapted from bindings.conf" com:
-   - `SUPER+SHIFT+CTRL+F5/F6` → brightness (scripts em `controllers/`)
-   - `SUPER+Q` → fechar janela (`hl.unbind("SUPER + W")` + `hl.dsp.window.close()`)
-   - `SUPER+SHIFT+CTRL+LEFT/RIGHT` → workspace prev/next (**`-1`/`+1`**, todos os workspaces)
-   - `SUPER+CTRL+ALT+LEFT/RIGHT` → mover janela para workspace prev/next (`-1`/`+1`)
-4. **Correção Caps Lock**: removido `compose:caps` via `kb_options = ""`.
-5. **Correção workspace > 9 no widget**: clonado `omarchy.workspaces` →
-   `<usuario>.workspaces` e ajustado `workspaceIds()` (removido `id <= 10`,
-   sempre inclui o workspace ativo).
-6. **Correção `foot.ini`**: removida linha defeituosa `\n[text-bindings]` e a
-   seção `[text-bindings]` duplicada.
+3. **`bindings.lua`**: added the "Adapted from bindings.conf" block with:
+   - `SUPER+SHIFT+CTRL+F5/F6` → brightness (scripts in `controllers/`)
+   - `SUPER+Q` → close window (`hl.unbind("SUPER + W")` + `hl.dsp.window.close()`)
+   - `SUPER+SHIFT+CTRL+LEFT/RIGHT` → previous/next workspace (**`-1`/`+1`**, all workspaces)
+   - `SUPER+CTRL+ALT+LEFT/RIGHT` → move window to previous/next workspace (`-1`/`+1`)
+4. **Caps Lock fix**: removed `compose:caps` via `kb_options = ""`.
+5. **Workspace > 9 widget fix**: cloned `omarchy.workspaces` →
+   `<user>.workspaces` and adjusted `workspaceIds()` (removed `id <= 10`,
+   always includes the active workspace).
+6. **`foot.ini` fix**: removed the defective line `\n[text-bindings]` and the
+   duplicated `[text-bindings]` section.
 
 ---
 
-## 6. Resumo das diferenças-chave
+## 6. Summary of key differences
 
-1. **Estado ativo vs template:** `.conf` ativos; `.lua` majoritariamente template.
-2. **Sintaxe:** `key=value`+blocos vs helpers Lua.
-3. **Carregamento:** `source=` vs `require()`.
-4. **Bindings:** ~30 binds no `.conf` vs bloco adaptado menor no `.lua`.
-5. **Input:** `.conf` ativo; `.lua` agora ativo (após correção Caps Lock).
-6. **Look'n'feel:** `.lua` mais completo e ativo que o `.conf`.
-7. **Monitores:** divergem no monitor ativo.
-8. **Autostart:** `.conf` executa hyprsunset + seta layout; `.lua` vazio.
-9. **Somente `.conf`:** envs, hypridle, hyprlock, hyprsunset, xdph.
+1. **Active state vs template:** `.conf` active; `.lua` mostly template.
+2. **Syntax:** `key=value`+blocks vs Lua helpers.
+3. **Loading:** `source=` vs `require()`.
+4. **Bindings:** ~30 binds in `.conf` vs a smaller adapted block in `.lua`.
+5. **Input:** `.conf` active; `.lua` now active (after the Caps Lock fix).
+6. **Look'n'feel:** `.lua` more complete and active than `.conf`.
+7. **Monitors:** they diverge on the active monitor.
+8. **Autostart:** `.conf` runs hyprsunset + sets the layout; `.lua` empty.
+9. **`.conf` only:** envs, hypridle, hyprlock, hyprsunset, xdph.
 
-## 7. Conclusão
+## 7. Conclusion
 
-Os dois formatos cobrem o mesmo escopo (principal, autostart, bindings, input,
-looknfeel, monitors), mas NÃO são equivalentes em conteúdo efetivo: a
-configuração real hoje vive majoritariamente no formato `.lua` ativo (após a
-migração desta sessão), enquanto os `.conf` ficaram em backup em `backup_conf/`.
+Both formats cover the same scope (main, autostart, bindings, input,
+looknfeel, monitors), but they are NOT equivalent in effective content: the
+real configuration today lives mostly in the active `.lua` format (after this
+session's migration), while the `.conf` files were left as backups in `backup_conf/`.
