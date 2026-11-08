@@ -45,7 +45,7 @@ DEFAULTS = {
     "offset_step": 500,
     "max_offset_up": 2000,
     "max_offset_down": 2000,
-    "update_seconds": 20,
+    "update_seconds": 300,
 }
 
 
@@ -204,15 +204,40 @@ def target_temperature(config, elevation, offset):
 # hyprsunset control
 # --------------------------------------------------------------------------- #
 
-def hyprsunset_pid():
+_cached_hyprsunset_pid = None
+
+
+def _process_name(pid):
     try:
-        result = subprocess.run(
-            ["pgrep", "-x", "hyprsunset"], capture_output=True, text=True, timeout=5
-        )
-    except (OSError, subprocess.SubprocessError):
+        with open(f"/proc/{pid}/comm") as handle:
+            return handle.read().strip()
+    except OSError:
         return None
-    pid = result.stdout.strip()
-    return pid or None
+
+
+def hyprsunset_pid():
+    """Return hyprsunset's PID, cached and checked through /proc.
+
+    Spawning `pgrep` every tick costs far more CPU than reading /proc, so the
+    last known PID is revalidated and a full scan only happens when it is gone.
+    """
+    global _cached_hyprsunset_pid
+
+    if _cached_hyprsunset_pid and _process_name(_cached_hyprsunset_pid) == "hyprsunset":
+        return _cached_hyprsunset_pid
+
+    _cached_hyprsunset_pid = None
+    try:
+        entries = os.listdir("/proc")
+    except OSError:
+        return None
+
+    for entry in entries:
+        if entry.isdigit() and _process_name(entry) == "hyprsunset":
+            _cached_hyprsunset_pid = entry
+            return entry
+
+    return None
 
 
 def apply_temperature(temperature):

@@ -23,4 +23,11 @@ end
 hl.on("hyprland.start", function()
   write_conf()
   hl.exec_cmd("pkill -x hyprsunset; setsid uwsm-app -- hyprsunset >/dev/null 2>&1 &")
+  -- Reapply the dynamic temperature right after the fresh hyprsunset starts, so
+  -- the screen never waits for the daemon's next (slow) update tick.
+  hl.exec_cmd(
+    "sleep 1; "
+      .. (os.getenv("HOME") or "")
+      .. "/.config/hypr/controllers/night_light_dynamic.py --once >/dev/null 2>&1"
+  )
 end)

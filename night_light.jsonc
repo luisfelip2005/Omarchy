@@ -55,6 +55,6 @@
   // Lower = takes longer to get dark (-8.0 ≈ 45 min after sunset).
   "full_elevation": -8.0,
 
-  // Update interval, in seconds.
-  "update_seconds": 20
+  // Update interval, in seconds (300 = every 5 minutes).
+  "update_seconds": 300
 }
