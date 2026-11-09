@@ -29,35 +29,40 @@
 -- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")
 
 -- ---------------------------------------------------------------------------
--- Adapted from bindings.conf (section "# Adapar para o .lua")
+-- Adapted from bindings.conf (section "# Adapar para o .lua" — "Adapt to .lua")
 -- ---------------------------------------------------------------------------
 
 -- Brightness (decrease / increase)
 o.bind("SUPER + SHIFT + CTRL + F5", "Decrease brightness", os.getenv("HOME") .. "/.config/hypr/controllers/decrease_brightness.sh")
 o.bind("SUPER + SHIFT + CTRL + F6", "Increase brightness", os.getenv("HOME") .. "/.config/hypr/controllers/increase_brightness.sh")
 
+-- Night light (hyprsunset): toggle on/off (restored from the old bindings.conf)
+o.bind("SUPER + ALT + N", "Toggle night light", os.getenv("HOME") .. "/.config/hypr/controllers/toggle_night_light.sh")
+
 -- Night light (hyprsunset): more orange = lower temperature
 o.bind("SUPER + CTRL + SHIFT + N", "Night light: more orange (decrease temperature)", os.getenv("HOME") .. "/.config/hypr/controllers/decrease_temperature.sh")
 o.bind("SUPER + CTRL + ALT + N", "Night light: less orange (increase temperature)", os.getenv("HOME") .. "/.config/hypr/controllers/increase_temperature.sh")
 
--- Close windows (replace default SUPER + W)
+-- Close windows on SUPER + Q only (unbind the extra default on SUPER + W)
 hl.unbind("SUPER + W")
-o.bind("SUPER + Q", "Close window", hl.dsp.window.close())
 
 -- Close all windows with confirmation pop-up (replace default CTRL + ALT + DELETE)
 hl.unbind("CTRL + ALT + DELETE")
 o.bind("CTRL + ALT + DELETE", "Close all windows (confirm)", os.getenv("HOME") .. "/.config/hypr/controllers/confirm_close_all.sh")
 
 -- Switch to previous/next workspace (navigates all workspaces, including empty)
-o.bind("SUPER + CTRL + LEFT", "Previous workspace", hl.dsp.focus({ workspace = "-1" }))
-o.bind("SUPER + CTRL + RIGHT", "Next workspace", hl.dsp.focus({ workspace = "+1" }))
+o.rebind("SUPER + CTRL + LEFT", "Previous workspace", hl.dsp.focus({ workspace = "-1" }))
+o.rebind("SUPER + CTRL + RIGHT", "Next workspace", hl.dsp.focus({ workspace = "+1" }))
 
 -- Move active window to previous/next workspace
 o.bind("SUPER + CTRL + ALT + LEFT", "Move window to previous workspace", hl.dsp.window.move({ workspace = "-1" }))
 o.bind("SUPER + CTRL + ALT + RIGHT", "Move window to next workspace", hl.dsp.window.move({ workspace = "+1" }))
 
--- Steam
-o.bind("SUPER + SHIFT + T", "Steam", { launch = "steam" })
+-- Steam (replaces default SUPER + SHIFT + T: Activity/btop)
+o.rebind("SUPER + SHIFT + T", "Steam", { launch = "steam" })
+
+-- System monitor (btop TUI; the default SUPER + SHIFT + T now launches Steam)
+o.bind("SUPER + SHIFT + ALT + T", "btop", { tui = "btop" })
 
 -- VSCode
 o.bind("SUPER + SHIFT + V", "VSCode", { launch = "code" })
@@ -70,3 +75,7 @@ o.bind("SUPER + SHIFT + U", "Stremio", { launch = "stremio" })
 
 -- Winboat
 o.bind("SUPER + SHIFT + K", "Winboat", { launch = "/opt/winboat/winboat" })
+
+-- Changing the app menu
+hl.unbind("SUPER + ALT + SPACE")
+o.bind("SUPER + ALT + SPACE", "Apps", "omarchy-menu toggle apps")

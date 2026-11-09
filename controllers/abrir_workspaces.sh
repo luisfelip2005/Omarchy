@@ -1,51 +1,51 @@
 #!/usr/bin/env bash
 #
-# Abre as janelas do setup em seus workspaces (Omarchy / Hyprland).
+# Opens the setup windows in their workspaces (Omarchy / Hyprland).
 #
-#   ws1: cmatrix + cava (terminais), btop, YouTube webapp
+#   ws1: cmatrix + cava (terminals), btop, YouTube webapp
 #   ws2: zen browser
 #   ws7: whatsapp webapp
 #   ws8: mission center
 #   ws9: steam
 #
-# WS1 é montado como janelas TILED no dwindle (gaps/bordas nativas):
-#   - YouTube webapp na coluna direita (altura total)
-#   - coluna esquerda: cmatrix e cava em cima; btop embaixo
+# WS1 is built as TILED windows in dwindle (native gaps/borders):
+#   - YouTube webapp in the right column (full height)
+#   - left column: cmatrix and cava on top; btop at the bottom
 #
-# Uso:
-#   abrir_workspaces.sh            # monta tudo
-#   abrir_workspaces.sh --ws1-only # só monta o workspace 1
+# Usage:
+#   abrir_workspaces.sh            # build everything
+#   abrir_workspaces.sh --ws1-only # only build workspace 1
 
 set -euo pipefail
 
 TERMINAL="foot"
 
 # ---------------------------------------------------------------------------
-# Helpers para conversar com o Hyprland (API Lua / hyprctl)
+# Helpers to talk to Hyprland (Lua API / hyprctl)
 # ---------------------------------------------------------------------------
 
 hlp_eval() {
   hyprctl eval "$1"
 }
 
-# Troca para o workspace N.
+# Switch to workspace N.
 goto_ws() {
   hlp_eval "hl.dispatch(hl.dsp.focus({ workspace = \"$1\" }))" >/dev/null 2>&1
   sleep 0.3
 }
 
-# Lança um comando no contexto do Hyprland.
+# Launch a command in Hyprland's context.
 hypr_exec() {
   local cmd="$1"
   hlp_eval "hl.dispatch(hl.dsp.exec_cmd(\"$cmd\"))" >/dev/null 2>&1
 }
 
-# Foca uma janela pelo endereço.
+# Focus a window by address.
 focus_addr() {
   hlp_eval "hl.dispatch(hl.dsp.focus({ window = \"address:$1\" }))" >/dev/null 2>&1
 }
 
-# Espera até existir uma janela cuja classe casa (regex). Imprime o address.
+# Wait until a window whose class matches (regex) exists. Print its address.
 wait_window() {
   local class_re="$1"
   local timeout="${2:-25}"
@@ -66,7 +66,7 @@ wait_window() {
   return 1
 }
 
-# Direciona o próximo split do dwindle.
+# Direct the next dwindle split.
 preselect() {
   hlp_eval "hl.dispatch(hl.dsp.layout(\"preselect $1\"))" >/dev/null 2>&1
 }
@@ -76,33 +76,33 @@ preselect() {
 # ---------------------------------------------------------------------------
 
 open_ws1() {
-  echo "→ ws1: montando cmatrix, cava, YouTube e btop (dwindle)..."
+  echo "→ ws1: building cmatrix, cava, YouTube and btop (dwindle)..."
 
   goto_ws 1
 
-  # 1º: YouTube webapp — ocupa a coluna direita
+  # 1st: YouTube webapp — occupies the right column
   hypr_exec "omarchy-launch-webapp https://youtube.com/"
   local yt
   yt="$(wait_window "chrome-youtube" 45 || true)"
   if [[ -z "$yt" ]]; then
-    echo "  ! YouTube não detectado; abrindo os terminais mesmo assim"
+    echo "  ! YouTube not detected; opening the terminals anyway"
   else
     focus_addr "$yt"
   fi
 
-  # 2º: cmatrix — split para a esquerda (YouTube fica na direita)
+  # 2nd: cmatrix — split to the left (YouTube stays on the right)
   preselect left
   hypr_exec "$TERMINAL -a cmatrix cmatrix"
   local cm
   cm="$(wait_window "^cmatrix$" 15 || true)"
   [[ -n "$cm" ]] && focus_addr "$cm"
 
-  # 3º: btop — split para baixo (rodapé da coluna esquerda)
+  # 3rd: btop — split down (bottom of the left column)
   preselect down
   hypr_exec "$TERMINAL -a btop btop"
   wait_window "^btop$" 15 >/dev/null 2>&1 || true
 
-  # 4º: cava — foca cmatrix e divide o topo à direita
+  # 4th: cava — focus cmatrix and split the top to the right
   [[ -n "$cm" ]] && focus_addr "$cm"
   preselect right
   hypr_exec "$TERMINAL -a cava cava"
@@ -110,28 +110,28 @@ open_ws1() {
 }
 
 open_ws2() {
-  echo "→ ws2: abrindo zen browser"
+  echo "→ ws2: opening zen browser"
   goto_ws 2
   hypr_exec "omarchy-launch-browser"
   wait_window "^zen$" 35 >/dev/null 2>&1 || true
 }
 
 open_ws7() {
-  echo "→ ws7: abrindo whatsapp webapp"
+  echo "→ ws7: opening whatsapp webapp"
   goto_ws 7
   hypr_exec "omarchy-launch-webapp https://web.whatsapp.com/"
   wait_window "chrome-web.whatsapp" 45 >/dev/null 2>&1 || true
 }
 
 open_ws8() {
-  echo "→ ws8: abrindo mission center"
+  echo "→ ws8: opening mission center"
   goto_ws 8
   hypr_exec "flatpak run io.missioncenter.MissionCenter"
   wait_window "missioncenter" 35 >/dev/null 2>&1 || true
 }
 
 open_ws9() {
-  echo "→ ws9: abrindo steam"
+  echo "→ ws9: opening steam"
   goto_ws 9
   hypr_exec "steam"
   wait_window "^steam$" 45 >/dev/null 2>&1 || true
@@ -152,7 +152,7 @@ done
 
 if [[ "$mode" == "ws1" ]]; then
   open_ws1
-  echo "Pronto. Workspace 1 montado."
+  echo "Done. Workspace 1 built."
   exit 0
 fi
 
@@ -162,4 +162,4 @@ open_ws7
 open_ws8
 open_ws9
 
-echo "Pronto. Ambiente montado."
+echo "Done. Environment built."
