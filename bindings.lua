@@ -61,8 +61,8 @@ o.bind("SUPER + CTRL + ALT + RIGHT", "Move window to next workspace", hl.dsp.win
 -- Steam (replaces default SUPER + SHIFT + T: Activity/btop)
 o.rebind("SUPER + SHIFT + T", "Steam", { launch = "steam" })
 
--- System monitor (btop TUI; default used to be SUPER + SHIFT + T)
-o.bind("SUPER + CTRL + SHIFT + ALT + T", "btop", { tui = "btop" })
+-- System monitor (btop TUI; the default SUPER + SHIFT + T now launches Steam)
+o.bind("SUPER + SHIFT + ALT + T", "btop", { tui = "btop" })
 
 -- VSCode
 o.bind("SUPER + SHIFT + V", "VSCode", { launch = "code" })
